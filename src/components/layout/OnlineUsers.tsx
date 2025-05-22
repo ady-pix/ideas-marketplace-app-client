@@ -46,6 +46,7 @@ function OnlineUsers(): JSX.Element {
             <button
                 ref={dropdownButtonRef}
                 onClick={toggleDropdown}
+                aria-label='Show online users'
                 className='flex items-center text-white hover:bg-primary/80 px-3 py-2 rounded cursor-pointer'
             >
                 <span>Online</span>
@@ -57,6 +58,7 @@ function OnlineUsers(): JSX.Element {
             {isDropdownOpen && (
                 <div
                     ref={dropDownRef}
+                    data-testid='online-users-dropdown'
                     className='absolute -right-20 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-50 max-w-[calc(100vw-2rem)]'
                 >
                     <div className='py-2 px-3 bg-gray-100 border-b'>
@@ -70,6 +72,7 @@ function OnlineUsers(): JSX.Element {
                             onlineUsers.map((user) => (
                                 <div
                                     key={user.id}
+                                    data-testid='online-user'
                                     className='px-3 py-2 hover:bg-gray-100 flex items-center'
                                 >
                                     <img
@@ -78,9 +81,9 @@ function OnlineUsers(): JSX.Element {
                                         className='h-8 w-8 rounded-full mr-2'
                                     />
                                     <div>
-                                        <p className='text-sm font-medium text-gray-800 truncate'>
+                                        <span className='text-sm font-medium text-gray-800 truncate'>
                                             {user.displayName}
-                                        </p>
+                                        </span>
                                     </div>
                                 </div>
                             ))

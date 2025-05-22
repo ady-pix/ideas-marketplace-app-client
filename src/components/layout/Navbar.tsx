@@ -156,7 +156,7 @@ function Navbar(): JSX.Element {
                                     ref={profileButtonRef}
                                     onClick={toggleProfileDropdown}
                                     className='flex items-center focus:outline-none cursor-pointer'
-                                    aria-label='Open profile menu'
+                                    aria-label='Open desktop profile menu'
                                 >
                                     <img
                                         src={profilePhoto}
@@ -174,6 +174,7 @@ function Navbar(): JSX.Element {
                                 {profileDropdownOpen && (
                                     <div
                                         ref={profileDropdownRef}
+                                        data-testid="desktop-profile-dropdown"
                                         className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50'
                                     >
                                         <Link
@@ -203,7 +204,7 @@ function Navbar(): JSX.Element {
                                 ref={profileButtonRef}
                                 onClick={toggleProfileDropdown}
                                 className='relative flex items-center mr-4 focus:outline-none'
-                                aria-label='Open profile menu'
+                                aria-label='Open mobile profile menu'
                             >
                                 <img
                                     src={profilePhoto}
@@ -217,13 +218,11 @@ function Navbar(): JSX.Element {
                             ref={menuButtonRef}
                             onClick={toggleMenu}
                             className='text-white focus:outline-none z-50 relative'
-                            aria-label='Toggle menu'
+                            aria-label='Open mobile menu'
                         >
                             {isMenuOpen || profileDropdownOpen ? (
-                                // X icon for close
                                 <IoMdClose className='h-6 w-6' />
                             ) : (
-                                // Hamburger icon
                                 <IoMenu className='h-6 w-6' />
                             )}
                         </button>
@@ -235,6 +234,7 @@ function Navbar(): JSX.Element {
                     <div
                         ref={menuRef}
                         className='md:hidden fixed inset-0 z-40 bg-primary/95 pt-16'
+                        data-testid="mobile-menu"
                     >
                         <div className='flex flex-col items-center py-8 space-y-4'>
                             {getFilteredNavLinks().map((link) => (
@@ -251,6 +251,7 @@ function Navbar(): JSX.Element {
                                             : ''
                                     }`}
                                     onClick={() => setIsMenuOpen(false)}
+                                    data-testid={`mobile-nav-link-${link.text.toLowerCase()}`}
                                 >
                                     {link.text}
                                 </Link>
@@ -261,6 +262,7 @@ function Navbar(): JSX.Element {
                                 <button
                                     onClick={handleLogout}
                                     className='px-6 py-3 rounded transition-colors duration-200 text-lg hover:bg-primary/80 text-accent cursor-pointer'
+                                    data-testid="mobile-logout-button"
                                 >
                                     Logout
                                 </button>
@@ -272,6 +274,7 @@ function Navbar(): JSX.Element {
                 {profileDropdownOpen && (
                     <div
                         ref={profileDropdownRef}
+                        data-testid='mobile-profile-dropdown'
                         className='md:hidden fixed inset-0 z-40 bg-primary/95 pt-16'
                     >
                         <div className='flex flex-col items-center py-8 space-y-4'>

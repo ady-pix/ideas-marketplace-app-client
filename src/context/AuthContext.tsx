@@ -22,41 +22,35 @@ import { auth, database } from '../services/firebase'
 
 interface AuthContextType {
     currentUser: User | null
-    loading: boolean
-    signup: (
-        email: string,
-        password: string,
-        displayName: string
-    ) => Promise<void>
-    login: (email: string, password: string) => Promise<void>
-    loginWithGoogle: () => Promise<void>
-    logout: () => Promise<void>
     userProfile: UserProfile | null
+    loading: boolean
+    login: (email: string, password: string) => Promise<void>
+    signup: (email: string, password: string, displayName: string) => Promise<void>
+    logout: () => Promise<void>
+    updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
 }
 
 interface UserProfile {
     displayName: string
     email: string
-    photoURL: string
-    createdAt: any // Using any for serverTimestamp
+    photoURL: string | null
+    createdAt: Date | null
     isOnline: boolean
 }
 
 interface AuthProviderProps {
     children: ReactNode
+    firebaseAuth?: typeof auth
+    firebaseDb?: typeof database
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | null>(null)
 
-export function useAuth() {
-    const context = useContext(AuthContext)
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider')
-    }
-    return context
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ 
+    children, 
+    firebaseAuth = auth,
+    firebaseDb = database 
+}: AuthProviderProps) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null)
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [loading, setLoading] = useState(true)
@@ -64,7 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Fetch user profile data from Firestore
     const fetchUserProfile = async (user: User) => {
         try {
-            const userDoc = await getDoc(doc(database, 'users', user.uid))
+            const userDoc = await getDoc(doc(firebaseDb, 'users', user.uid))
             if (userDoc.exists()) {
                 setUserProfile(userDoc.data() as UserProfile)
             }
@@ -81,7 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ) {
         try {
             const userCredential = await createUserWithEmailAndPassword(
-                auth,
+                firebaseAuth,
                 email,
                 password
             )
@@ -96,7 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 createdAt: serverTimestamp(),
                 isOnline: true,
             }
-            await setDoc(doc(database, 'users', user.uid), userProfile)
+            await setDoc(doc(firebaseDb, 'users', user.uid), userProfile)
             setUserProfile(userProfile as UserProfile)
         } catch (error) {
             console.error('Error during signup:', error)
@@ -109,14 +103,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function login(email: string, password: string) {
         try {
             const userCredential = await signInWithEmailAndPassword(
-                auth,
+                firebaseAuth,
                 email,
                 password
             )
             // Update online status
             if (userCredential.user) {
                 await setDoc(
-                    doc(database, 'users', userCredential.user.uid),
+                    doc(firebaseDb, 'users', userCredential.user.uid),
                     {
                         isOnline: true,
                     },
@@ -133,13 +127,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function loginWithGoogle() {
         try {
             const provider = new GoogleAuthProvider()
-            const userCredential = await signInWithPopup(auth, provider)
+            const userCredential = await signInWithPopup(firebaseAuth, provider)
             const user = userCredential.user
             // Get the additional user info from the credential
             const additionalUserInfo = getAdditionalUserInfo(userCredential)
             const isNewUser = additionalUserInfo.isNewUser
             // Check if user exists in Firestore
-            const userDoc = await getDoc(doc(database, 'users', user.uid))
+            const userDoc = await getDoc(doc(firebaseDb, 'users', user.uid))
 
             if (isNewUser) {
                 // Create a new user profile if it doesn't exist
@@ -151,12 +145,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     isOnline: true,
                 }
 
-                await setDoc(doc(database, 'users', user.uid), userProfile)
+                await setDoc(doc(firebaseDb, 'users', user.uid), userProfile)
                 setUserProfile(userProfile as UserProfile)
             } else {
                 // Just update online status
                 await setDoc(
-                    doc(database, 'users', user.uid),
+                    doc(firebaseDb, 'users', user.uid),
                     {
                         isOnline: true,
                     },
@@ -175,7 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             // Update online status before signing out
             if (currentUser) {
                 await setDoc(
-                    doc(database, 'users', currentUser.uid),
+                    doc(firebaseDb, 'users', currentUser.uid),
                     {
                         isOnline: false,
                     },
@@ -185,7 +179,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
 
             console.log('About to sign out')
-            await signOut(auth)
+            await signOut(firebaseAuth)
             console.log('Successfully signed out')
             return
         } catch (error) {
@@ -196,7 +190,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Listen for auth state changes
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
             setCurrentUser(user)
             if (user) {
                 fetchUserProfile(user)
@@ -206,8 +200,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setLoading(false)
         })
 
-        return unsubscribe
-    }, [])
+        return () => unsubscribe()
+    }, [firebaseAuth])
 
     const value = {
         currentUser,
@@ -217,6 +211,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         loginWithGoogle,
         logout,
         userProfile,
+        updateUserProfile: async (data: Partial<UserProfile>) => {
+            if (userProfile) {
+                await setDoc(
+                    doc(firebaseDb, 'users', currentUser!.uid),
+                    {
+                        ...userProfile,
+                        ...data,
+                    },
+                    { merge: true }
+                )
+                setUserProfile({ ...userProfile, ...data } as UserProfile)
+            }
+        },
     }
 
     return (
@@ -225,3 +232,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         </AuthContext.Provider>
     )
 }
+
+export function useAuth() {
+    const context = useContext(AuthContext)
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider')
+    }
+    return context
+}
+
+export { AuthContext }

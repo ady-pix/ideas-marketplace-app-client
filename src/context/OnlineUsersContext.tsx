@@ -29,7 +29,7 @@ interface OnlineUsersContextType {
     onlineUsers: OnlineUser[]
 }
 
-const OnlineUsersContext = createContext<OnlineUsersContextType>({
+export const OnlineUsersContext = createContext<OnlineUsersContextType>({
     onlineUsers: [],
 })
 
