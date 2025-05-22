@@ -9,7 +9,7 @@ export default defineConfig({
         port: 5173,
         host: true,
         fs: {
-            strict: false
-        }
-    }
+            strict: false,
+        },
+    },
 })
