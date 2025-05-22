@@ -1,5 +1,5 @@
 import { mount } from '@cypress/react'
-import '../../src/Index.css'
+import '../../src/index.css'
 
 declare global {
     namespace Cypress {
