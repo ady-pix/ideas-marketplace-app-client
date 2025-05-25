@@ -167,16 +167,16 @@ describe('Navbar', () => {
             cy.get('a').contains('Login').should('be.visible')
             cy.get('a').contains('Register').should('be.visible')
             cy.get('button[aria-label="Show online users"]').should('not.exist')
-            cy.get('button[aria-label="Open desktop profile menu"]').should(
-                'not.exist'
-            )
+            cy.get(
+                'button[aria-label="Toggle desktop profile dropdown"]'
+            ).should('not.exist')
         })
 
         it('shows login and register links in mobile view', () => {
             cy.viewport('iphone-6')
             mountNavbar()
 
-            cy.get('button[aria-label="Open mobile menu"]')
+            cy.get('button[aria-label="Mobile Toggle menu"]')
                 .should('be.visible')
                 .should('exist')
                 .click({ force: true })
@@ -194,7 +194,7 @@ describe('Navbar', () => {
             mountAuthenticatedNavbar()
 
             // Verify profile menu button is visible
-            cy.get('button[aria-label="Open desktop profile menu"]')
+            cy.get('button[aria-label="Toggle desktop profile dropdown"]')
                 .should('be.visible')
                 .click()
 
@@ -300,8 +300,8 @@ describe('Navbar', () => {
             // Close profile menu
             cy.get('body').click(0, 0)
 
-            // Open mobile menu
-            cy.get('button[aria-label="Open mobile menu"]')
+            // Open Mobile menu
+            cy.get('button[aria-label="Mobile Toggle menu"]')
                 .should('be.visible')
                 .should('exist')
                 .click({ force: true })
@@ -356,7 +356,7 @@ describe('Navbar', () => {
             })
 
             // Close mobile menu
-            cy.get('button[aria-label="Open mobile menu"]').click()
+            cy.get('button[aria-label="Mobile Toggle menu"]').click()
 
             // Verify mobile menu is closed
             cy.get('[data-testid="mobile-menu"]').should('not.exist')
@@ -368,7 +368,7 @@ describe('Navbar', () => {
 
             mountAuthenticatedNavbar({ onLogout })
 
-            cy.get('button[aria-label="Open desktop profile menu"]')
+            cy.get('button[aria-label="Toggle desktop profile dropdown"]')
                 .should('be.visible')
                 .click()
 

@@ -25,7 +25,11 @@ interface AuthContextType {
     userProfile: UserProfile | null
     loading: boolean
     login: (email: string, password: string) => Promise<void>
-    signup: (email: string, password: string, displayName: string) => Promise<void>
+    signup: (
+        email: string,
+        password: string,
+        displayName: string
+    ) => Promise<void>
     logout: () => Promise<void>
     updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
 }
@@ -46,10 +50,10 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-export const AuthProvider = ({ 
-    children, 
+export const AuthProvider = ({
+    children,
     firebaseAuth = auth,
-    firebaseDb = database 
+    firebaseDb = database,
 }: AuthProviderProps) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null)
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
@@ -233,9 +237,9 @@ export const AuthProvider = ({
     )
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
     const context = useContext(AuthContext)
-    if (context === undefined) {
+    if (!context) {
         throw new Error('useAuth must be used within an AuthProvider')
     }
     return context
