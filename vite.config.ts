@@ -2,20 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
     plugins: [react(), tailwindcss()],
-    server: {
-        port: 5173,
-        host: true,
-        fs: {
-            strict: false,
-        },
-        proxy: {
-            '/api': {
-                target: 'http://localhost:5000',
-                changeOrigin: true,
-            },
-        },
+    build: {
+        target: 'es2022', // Support for top-level await
+        // Alternative: specify modern browsers
+        // target: ['chrome100', 'firefox100', 'safari15', 'edge100']
+    },
+    esbuild: {
+        target: 'es2022', // Ensure esbuild also uses modern target
     },
 })

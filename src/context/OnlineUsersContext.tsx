@@ -14,6 +14,7 @@ import {
     query,
     where,
     serverTimestamp,
+    Timestamp,
 } from 'firebase/firestore'
 import { database } from '../services/firebase' // Keep using your existing Firestore reference
 import { useAuth } from './AuthContext'
@@ -22,7 +23,7 @@ interface OnlineUser {
     id: string
     displayName: string
     photoURL: string
-    lastSeen: any // Firestore timestamp
+    lastSeen: Timestamp | null
 }
 
 interface OnlineUsersContextType {

@@ -29,8 +29,11 @@ const formSchema = z.object({
     protectionStatus: z.string().min(1, 'Please select protection status'),
     requireNDA: z.boolean(),
     desiredPrice: z
-        .number({ invalid_type_error: 'Price must be a valid number' })
-        .positive('Price must be greater than zero')
+        .number({
+            required_error: 'Price is required',
+            invalid_type_error: 'Price must be a valid number',
+        })
+        .min(1, 'Price must be greater than zero')
         .max(10000000, 'Price cannot exceed $10,000,000'),
     contactPreference: z.string().min(1, 'Please select contact preference'),
     additionalNotes: z.string().optional(),
