@@ -141,7 +141,7 @@ dist
 
 # Generated TypeScript declaration files
 **/*.d.ts
-!src/types//.d.ts  # Keep custom type definitions
-!.d.ts              # Keep root level type definitions
-!cypress/support//*.d.ts
+!src/types/**/*.d.ts  # Keep custom type definitions
+!*.d.ts               # Keep root level type definitions
+!cypress/support/**/*.d.ts
 !src/env.d.ts
