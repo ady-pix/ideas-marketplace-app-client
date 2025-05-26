@@ -25,9 +25,7 @@ export default function IdeasPage() {
     const fetchCreatorName = useCallback(async (creatorId: string) => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/ideas/user/${creatorId}``${
-                    import.meta.env.VITE_API_URL
-                }/ideas/user/${creatorId}`
+                `${import.meta.env.VITE_API_URL}/ideas/user/${creatorId}`
             )
             if (response.ok) {
                 const userData = await response.json()
@@ -167,7 +165,6 @@ export default function IdeasPage() {
                 }
 
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/ideas?${queryString}`,
                     `${import.meta.env.VITE_API_URL}/ideas?${queryString}`,
                     {
                         signal: controller.signal,
