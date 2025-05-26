@@ -45,9 +45,7 @@ function LoginPage(): JSX.Element {
     return (
         <div className='max-w-md mx-auto mt-10'>
             <div className='bg-white p-8 rounded-lg shadow-md'>
-                <h2 className='text-3xl font-bold mb-6 text-center text-primary font-primary'>
-                    Login to Ideady
-                </h2>
+                <h2 className='title-primary-page'>Login to Ideady</h2>
 
                 {error && (
                     <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>

@@ -11,14 +11,16 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged,
     updateProfile,
     GoogleAuthProvider,
     signInWithPopup,
     getAdditionalUserInfo,
+    onAuthStateChanged,
 } from 'firebase/auth'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, database } from '../services/firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+import { auth, database, storage } from '../services/firebase'
 
 interface AuthContextType {
     currentUser: User | null
@@ -28,19 +30,16 @@ interface AuthContextType {
     signup: (
         email: string,
         password: string,
-        displayName: string
+        displayName: string,
+        profileData?: Partial<UserProfile>,
+        photoFile?: File | null
     ) => Promise<void>
     logout: () => Promise<void>
+    loginWithGoogle: () => Promise<void>
     updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
 }
 
-interface UserProfile {
-    displayName: string
-    email: string
-    photoURL: string | null
-    createdAt: Date | null
-    isOnline: boolean
-}
+import { UserProfile } from '../types/user'
 
 interface AuthProviderProps {
     children: ReactNode
@@ -64,7 +63,21 @@ export const AuthProvider = ({
         try {
             const userDoc = await getDoc(doc(firebaseDb, 'users', user.uid))
             if (userDoc.exists()) {
-                setUserProfile(userDoc.data() as UserProfile)
+                const data = userDoc.data()
+                setUserProfile({
+                    displayName: data.displayName || '',
+                    fullName: data.fullName || '',
+                    email: data.email || '',
+                    photoURL: data.photoURL || null,
+                    createdAt: data.createdAt || null,
+                    isOnline: data.isOnline || false,
+                    bio: data.bio || '',
+                    location: data.location || '',
+                    website: data.website || '',
+                    preferredCategories: data.preferredCategories || [],
+                    languagePreferences: data.languagePreferences || [],
+                    cvUrl: data.cvUrl || '',
+                })
             }
         } catch (error) {
             console.error('Error fetching user profile:', error)
@@ -75,7 +88,9 @@ export const AuthProvider = ({
     async function signup(
         email: string,
         password: string,
-        displayName: string
+        displayName: string,
+        profileData?: Partial<UserProfile>,
+        photoFile?: File | null
     ) {
         try {
             const userCredential = await createUserWithEmailAndPassword(
@@ -84,22 +99,56 @@ export const AuthProvider = ({
                 password
             )
             const user = userCredential.user
-            // Set display name
-            await updateProfile(user, { displayName })
-            // Create a user profile in Firestore
-            const userProfile = {
+
+            let photoURL = user.photoURL || ''
+
+            // Upload profile photo if provided
+            if (photoFile) {
+                const imageRef = ref(storage, `profile_images/${user.uid}`)
+                await uploadBytes(imageRef, photoFile)
+                photoURL = await getDownloadURL(imageRef)
+            }
+
+            // Set display name and photo URL
+            await updateProfile(user, { displayName, photoURL })
+
+            // Create user profile data with additional fields
+            const userProfileData = {
                 displayName,
                 email,
-                photoURL: user.photoURL || '',
+                photoURL,
                 createdAt: serverTimestamp(),
                 isOnline: true,
+                // Add additional profile fields if provided
+                fullName: profileData?.fullName || '',
+                bio: profileData?.bio || '',
+                location: profileData?.location || '',
+                website: profileData?.website || '',
+                preferredCategories: profileData?.preferredCategories || [],
+                languagePreferences: profileData?.languagePreferences || [],
             }
-            await setDoc(doc(firebaseDb, 'users', user.uid), userProfile)
-            setUserProfile(userProfile as UserProfile)
+
+            // Save to Firestore
+            await setDoc(doc(firebaseDb, 'users', user.uid), userProfileData)
+
+            // Set local state (without serverTimestamp since it's a FieldValue)
+            setUserProfile({
+                displayName,
+                fullName: profileData?.fullName || '',
+                email,
+                photoURL: photoURL || null,
+                createdAt: null, // Will be fetched on next read
+                isOnline: true,
+                bio: profileData?.bio || '',
+                location: profileData?.location || '',
+                website: profileData?.website || '',
+                preferredCategories: profileData?.preferredCategories || [],
+                languagePreferences: profileData?.languagePreferences || [],
+                cvUrl: '',
+            })
         } catch (error) {
             console.error('Error during signup:', error)
-            // You could do additional error handling here
-            throw error // Now re-throwing after handling
+            throw error
         }
     }
 
@@ -120,6 +169,8 @@ export const AuthProvider = ({
                     },
                     { merge: true }
                 )
+                // Fetch the updated profile
+                await fetchUserProfile(userCredential.user)
             }
         } catch (error) {
             console.error('Error during login:', error)
@@ -133,15 +184,14 @@ export const AuthProvider = ({
             const provider = new GoogleAuthProvider()
             const userCredential = await signInWithPopup(firebaseAuth, provider)
             const user = userCredential.user
+
             // Get the additional user info from the credential
             const additionalUserInfo = getAdditionalUserInfo(userCredential)
-            const isNewUser = additionalUserInfo.isNewUser
-            // Check if user exists in Firestore
-            const userDoc = await getDoc(doc(firebaseDb, 'users', user.uid))
+            const isNewUser = additionalUserInfo?.isNewUser || false
 
             if (isNewUser) {
-                // Create a new user profile if it doesn't exist
-                const userProfile = {
+                // Create a new user profile
+                const userProfileData = {
                     displayName: user.displayName || '',
                     email: user.email || '',
                     photoURL: user.photoURL || '',
@@ -149,8 +199,26 @@ export const AuthProvider = ({
                     isOnline: true,
                 }
 
-                await setDoc(doc(firebaseDb, 'users', user.uid), userProfile)
-                setUserProfile(userProfile as UserProfile)
+                await setDoc(
+                    doc(firebaseDb, 'users', user.uid),
+                    userProfileData
+                )
+
+                // Set local state
+                setUserProfile({
+                    displayName: user.displayName || '',
+                    fullName: '',
+                    email: user.email || '',
+                    photoURL: user.photoURL || null,
+                    createdAt: null, // Will be fetched on next read
+                    isOnline: true,
+                    bio: '',
+                    location: '',
+                    website: '',
+                    preferredCategories: [],
+                    languagePreferences: [],
+                    cvUrl: '',
+                })
             } else {
                 // Just update online status
                 await setDoc(
@@ -160,6 +228,8 @@ export const AuthProvider = ({
                     },
                     { merge: true }
                 )
+                // Fetch the updated profile
+                await fetchUserProfile(user)
             }
         } catch (error) {
             console.error('Error during loginWithGoogle:', error)
@@ -194,7 +264,7 @@ export const AuthProvider = ({
 
     // Listen for auth state changes
     useEffect(() => {
-        const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
             setCurrentUser(user)
             if (user) {
                 fetchUserProfile(user)
@@ -207,6 +277,20 @@ export const AuthProvider = ({
         return () => unsubscribe()
     }, [firebaseAuth])
 
+    const updateUserProfile = async (data: Partial<UserProfile>) => {
+        if (!currentUser || !userProfile) return
+
+        try {
+            await setDoc(doc(firebaseDb, 'users', currentUser.uid), data, {
+                merge: true,
+            })
+            setUserProfile({ ...userProfile, ...data })
+        } catch (error) {
+            console.error('Error updating user profile:', error)
+            throw error
+        }
+    }
+
     const value = {
         currentUser,
         loading,
@@ -215,19 +299,7 @@ export const AuthProvider = ({
         loginWithGoogle,
         logout,
         userProfile,
-        updateUserProfile: async (data: Partial<UserProfile>) => {
-            if (userProfile) {
-                await setDoc(
-                    doc(firebaseDb, 'users', currentUser!.uid),
-                    {
-                        ...userProfile,
-                        ...data,
-                    },
-                    { merge: true }
-                )
-                setUserProfile({ ...userProfile, ...data } as UserProfile)
-            }
-        },
+        updateUserProfile,
     }
 
     return (

@@ -6,11 +6,14 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import IdeasPage from './pages/IdeasPage'
-import ProfilePage from './pages/ProfilePage'
+import ViewProfilePage from './pages/ProfileDetailsPage'
+import EditProfilePage from './pages/EditProfilePage'
 import CreateIdeaPage from './pages/CreateIdeaPage'
 import IdeaDetailsPage from './pages/IdeaDetailsPage'
+import EditIdeaPage from './pages/EditIdeaPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/routing/ProtectedRoute'
+import SuccessPage from './pages/SuccessPage'
 
 function App() {
     return (
@@ -27,18 +30,36 @@ function App() {
                             />
                             <Route element={<ProtectedRoute />}>
                                 <Route
+                                    path='ideas/:id/edit'
+                                    element={<EditIdeaPage />}
+                                />
+                            </Route>
+                            <Route element={<ProtectedRoute />}>
+                                <Route
                                     path='create-idea'
                                     element={<CreateIdeaPage />}
                                 />
                                 <Route
                                     path='profile'
-                                    element={<ProfilePage />}
+                                    element={<ViewProfilePage />}
+                                />
+                                <Route
+                                    path='profile/edit'
+                                    element={<EditProfilePage />}
+                                />
+                                <Route
+                                    path='profile/:userId'
+                                    element={<ViewProfilePage />}
                                 />
                             </Route>
                             <Route path='/login' element={<LoginPage />} />
                             <Route
                                 path='/register'
                                 element={<RegisterPage />}
+                            />
+                            <Route
+                                path='/ideas/success'
+                                element={<SuccessPage />}
                             />
                             <Route path='*' element={<NotFoundPage />} />
                         </Route>

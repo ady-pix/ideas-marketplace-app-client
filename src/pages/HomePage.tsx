@@ -26,11 +26,11 @@ function HomePage() {
                         </Link>
                     </div>
                 </div>
-                <div className='absolute sm:relative sm:w-1/2 flex justify-center'>
+                <div className='absolute sm:relative sm:w-1/2 flex justify-center -z-10'>
                     <img
                         src={heroImage}
                         alt='Innovation'
-                        className='max-w-sm mt-60 sm:mt-20 -z-10 sm:pl-10 sm:max-w-md md:max-w-l lg:max-w-2xl object-contain'
+                        className='max-w-sm mt-60 sm:mt-20 sm:pl-10 sm:max-w-md md:max-w-l lg:max-w-2xl object-contain'
                         loading='lazy'
                     />
                 </div>

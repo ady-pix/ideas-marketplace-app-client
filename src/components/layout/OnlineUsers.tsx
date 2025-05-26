@@ -1,7 +1,8 @@
 // src/components/layout/OnlineUsers.tsx
 import { useState, useEffect, useRef, type JSX } from 'react'
+import { Link } from 'react-router-dom'
 import { useOnlineUsers } from '../../context/OnlineUsersContext'
-import defaultAvatar from '../../assets/avatar-color.svg'
+import defaultAvatar from '../../assets/avatar-grey.svg'
 
 function OnlineUsers(): JSX.Element {
     const { onlineUsers } = useOnlineUsers()
@@ -70,10 +71,12 @@ function OnlineUsers(): JSX.Element {
                     <div className='max-h-60 overflow-y-auto'>
                         {onlineUsers.length > 0 ? (
                             onlineUsers.map((user) => (
-                                <div
+                                <Link
                                     key={user.id}
+                                    to={`/profile/${user.id}`}
                                     data-testid='online-user'
-                                    className='px-3 py-2 hover:bg-gray-100 flex items-center'
+                                    className='px-3 py-2 hover:bg-gray-100 flex items-center transition-colors cursor-pointer'
+                                    onClick={() => setIsDropdownOpen(false)}
                                 >
                                     <img
                                         src={user.photoURL || defaultAvatar}
@@ -81,11 +84,11 @@ function OnlineUsers(): JSX.Element {
                                         className='h-8 w-8 rounded-full mr-2'
                                     />
                                     <div>
-                                        <span className='text-sm font-medium text-gray-800 truncate'>
+                                        <span className='text-sm font-medium text-gray-800 truncate hover:text-primary'>
                                             {user.displayName}
                                         </span>
                                     </div>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <p className='text-sm text-gray-500 py-2 px-3'>

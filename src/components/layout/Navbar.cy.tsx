@@ -4,6 +4,7 @@ import { OnlineUsersContext } from '../../context/OnlineUsersContext'
 import Navbar from './Navbar'
 import React, { useState } from 'react'
 import type { User as FirebaseUser } from 'firebase/auth'
+import type { Timestamp } from 'firebase/firestore'
 
 // Types
 interface User extends Partial<FirebaseUser> {
@@ -18,7 +19,7 @@ interface UserProfile {
     displayName: string
     email: string
     photoURL: string | null
-    createdAt: null
+    createdAt: Timestamp | null
     isOnline: boolean
 }
 
@@ -78,8 +79,8 @@ const MockOnlineUsersProvider = ({
 // Custom Auth Provider
 const CustomAuthProvider = ({
     children,
-    initialUser,
-    initialUserProfile,
+    initialUser = null,
+    initialUserProfile = null,
     onLogout,
 }: {
     children: React.ReactNode
@@ -104,12 +105,13 @@ const CustomAuthProvider = ({
     return (
         <AuthContext.Provider
             value={{
-                currentUser,
+                currentUser: currentUser as FirebaseUser | null,
                 userProfile,
                 loading,
                 login: async () => {},
                 signup: async () => {},
                 logout,
+                loginWithGoogle: async () => {},
                 updateUserProfile: async () => {},
             }}
         >
@@ -149,7 +151,10 @@ describe('Navbar', () => {
 
     const mountAuthenticatedNavbarWithRouter = (initialEntries: string[]) => {
         return cy.mount(
-            <CustomAuthProvider>
+            <CustomAuthProvider
+                initialUser={mockUser}
+                initialUserProfile={mockUserProfile}
+            >
                 <MockOnlineUsersProvider>
                     <MemoryRouter initialEntries={initialEntries}>
                         <Navbar />

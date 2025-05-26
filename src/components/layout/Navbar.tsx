@@ -1,11 +1,11 @@
 // src/components/layout/Navbar.tsx
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback, JSX } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { IoMdClose } from 'react-icons/io'
 import { IoMenu } from 'react-icons/io5'
 
 import logoImage from '../../assets/ideady-logo.svg'
-import defaultAvatar from '../../assets/avatar-color.svg'
+import defaultAvatar from '../../assets/avatar-grey.svg'
 
 import { useAuth } from '../../context/AuthContext'
 import OnlineUsers from './OnlineUsers'
@@ -31,9 +31,11 @@ function Navbar(): JSX.Element {
 
     const menuRef = useRef<HTMLDivElement>(null)
     const profileRef = useRef<HTMLDivElement>(null)
+    const desktopDropdownRef = useRef<HTMLDivElement>(null)
     const profileBtnRef = useRef<HTMLButtonElement>(null)
 
     const location = useLocation()
+    const navigate = useNavigate()
     const { currentUser, logout, userProfile } = useAuth()
 
     const profilePhoto =
@@ -47,20 +49,38 @@ function Navbar(): JSX.Element {
 
     const handleLogout = async () => {
         try {
+            console.log('Starting logout process...')
             await logout()
+            console.log('Logout completed successfully')
             setIsProfileOpen(false)
+            setIsMenuOpen(false)
+            // Navigate to home screen after successful logout
+            navigate('/')
         } catch (error) {
             console.error('Logout failed:', error)
         }
     }
 
     const handleClickOutside = useCallback(
-        (event: Event) => {
+        (event: MouseEvent) => {
+            const target = event.target as Node
+
+            const clickedOutsideDesktop =
+                desktopDropdownRef.current &&
+                !desktopDropdownRef.current.contains(target) &&
+                profileBtnRef.current &&
+                !profileBtnRef.current.contains(target)
+
+            const clickedOutsideMobile =
+                profileRef.current &&
+                !profileRef.current.contains(target) &&
+                profileBtnRef.current &&
+                !profileBtnRef.current.contains(target)
+
             if (
                 isProfileOpen &&
-                profileRef.current &&
-                !profileRef.current.contains(event.target as Node) &&
-                !profileBtnRef.current?.contains(event.target as Node)
+                clickedOutsideDesktop &&
+                clickedOutsideMobile
             ) {
                 setIsProfileOpen(false)
             }
@@ -69,12 +89,9 @@ function Navbar(): JSX.Element {
     )
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside)
-        document.addEventListener('touchstart', handleClickOutside)
-
+        document.addEventListener('pointerdown', handleClickOutside)
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside)
-            document.removeEventListener('touchstart', handleClickOutside)
+            document.removeEventListener('pointerdown', handleClickOutside)
         }
     }, [handleClickOutside])
 
@@ -112,27 +129,32 @@ function Navbar(): JSX.Element {
             </Link>
         ))
 
-    const DesktopProfileDropdown = () => (
-        <div
-            ref={profileRef}
-            className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50'
-            data-testid='desktop-profile-dropdown'
-        >
-            <Link
-                to='/profile'
-                className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                onClick={() => setIsProfileOpen(false)}
+    function DesktopProfileDropdown() {
+        return (
+            <div
+                ref={desktopDropdownRef}
+                className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50'
+                data-testid='desktop-profile-dropdown'
             >
-                Profile
-            </Link>
-            <button
-                onClick={handleLogout}
-                className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-            >
-                Logout
-            </button>
-        </div>
-    )
+                <Link
+                    to='/profile'
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    onClick={() => setIsProfileOpen(false)}
+                >
+                    Profile
+                </Link>
+                <button
+                    onClick={() => {
+                        console.log('LOGOUT CLICKED')
+                        handleLogout()
+                    }}
+                    className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer'
+                >
+                    Logout
+                </button>
+            </div>
+        )
+    }
 
     const MobileProfileDropdown = () => (
         <div

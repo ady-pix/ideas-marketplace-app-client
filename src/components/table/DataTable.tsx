@@ -1,11 +1,24 @@
 import { useState, useMemo } from 'react'
 
-function DataTable({ data, columns, onEdit, onDelete }) {
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState('asc')
+interface DataTableProps {
+    data: any[]
+    columns: Array<{
+        field: string
+        header: string
+        render?: (item: any) => React.ReactNode
+    }>
+    onEdit?: (item: any) => void
+    onDelete?: (id: string) => void
+    showActions?: boolean
+    showSearch?: boolean
+}
+
+function DataTable({ data, columns, onEdit, onDelete, showActions = true, showSearch = false }: DataTableProps) {
+    const [sortField, setSortField] = useState<string | null>(null)
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
     const [filterValue, setFilterValue] = useState('')
 
-    const handleSort = (field) => {
+    const handleSort = (field: string) => {
         if (sortField === field) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
         } else {
@@ -15,13 +28,15 @@ function DataTable({ data, columns, onEdit, onDelete }) {
     }
 
     const filteredData = useMemo(() => {
+        if (!showSearch || !filterValue) return data
+        
         return data.filter((item) => {
             return Object.values(item)
                 .join(' ')
                 .toLowerCase()
                 .includes(filterValue.toLowerCase())
         })
-    }, [data, filterValue])
+    }, [data, filterValue, showSearch])
 
     const sortedData = useMemo(() => {
         if (!sortField) return filteredData
@@ -39,15 +54,17 @@ function DataTable({ data, columns, onEdit, onDelete }) {
 
     return (
         <div className='w-full'>
-            <div className='mb-4'>
-                <input
-                    type='text'
-                    placeholder='Search...'
-                    className='form-input'
-                    value={filterValue}
-                    onChange={(e) => setFilterValue(e.target.value)}
-                />
-            </div>
+            {showSearch && (
+                <div className='mb-4'>
+                    <input
+                        type='text'
+                        placeholder='Search...'
+                        className='form-input'
+                        value={filterValue}
+                        onChange={(e) => setFilterValue(e.target.value)}
+                    />
+                </div>
+            )}
 
             <div className='overflow-x-auto rounded-lg shadow'>
                 <table className='min-w-full divide-y divide-gray-200'>
@@ -69,9 +86,11 @@ function DataTable({ data, columns, onEdit, onDelete }) {
                                     )}
                                 </th>
                             ))}
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                                Actions
-                            </th>
+                            {showActions && (onEdit || onDelete) && (
+                                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                                    Actions
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className='bg-white divide-y divide-gray-200'>
@@ -87,26 +106,32 @@ function DataTable({ data, columns, onEdit, onDelete }) {
                                             : row[column.field]}
                                     </td>
                                 ))}
-                                <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                                    <button
-                                        onClick={() => onEdit(row)}
-                                        className='text-indigo-600 hover:text-indigo-900 mr-2'
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete(row.id)}
-                                        className='text-red-600 hover:text-red-900'
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+                                {showActions && (onEdit || onDelete) && (
+                                    <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
+                                        {onEdit && (
+                                            <button
+                                                onClick={() => onEdit(row)}
+                                                className='text-indigo-600 hover:text-indigo-900 mr-2'
+                                            >
+                                                Edit
+                                            </button>
+                                        )}
+                                        {onDelete && (
+                                            <button
+                                                onClick={() => onDelete(row.id)}
+                                                className='text-red-600 hover:text-red-900'
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
+                                    </td>
+                                )}
                             </tr>
                         ))}
                         {sortedData.length === 0 && (
                             <tr>
                                 <td
-                                    colSpan={columns.length + 1}
+                                    colSpan={columns.length + (showActions && (onEdit || onDelete) ? 1 : 0)}
                                     className='px-6 py-4 text-center text-gray-500'
                                 >
                                     No data available

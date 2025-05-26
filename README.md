@@ -6,7 +6,6 @@ Ideady is a marketplace for innovative ideas where users can share, sell, and im
 
 -   **Share Your Ideas**: Upload innovative concepts and get community feedback
 -   **Sell Your Innovations**: Connect with potential buyers to monetize your creativity
--   **AI-Powered Improvements**: Enhance and visualize your ideas with our AI tools
 -   **User Authentication**: Secure user accounts with Firebase authentication
 -   **Real-time Database**: Firebase Firestore integration for dynamic content
 -   **File Storage**: Firebase Storage for idea-related files and images

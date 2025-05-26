@@ -8,8 +8,11 @@ function Layout() {
         <div className='bg-gray-100'>
             <Navbar />
             <main
-                className='w-full bg-cover bg-center bg-no-repeat min-h-screen'
-                style={{ backgroundImage: `url(${backgroundImage})` }}
+                className='w-full bg-center bg-no-repeat min-h-screen bg-scroll md:bg-fixed'
+                style={{
+                    backgroundImage: `url(${backgroundImage})`,
+                    backgroundSize: 'cover',
+                }}
             >
                 {/* Content container with padding */}
                 <div className='container mx-auto px-4 py-8'>
