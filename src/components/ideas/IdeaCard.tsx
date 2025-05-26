@@ -9,6 +9,7 @@ interface IdeaCardProps {
 export default function IdeaCard({ idea, className = '' }: IdeaCardProps) {
     return (
         <div
+            data-testid='idea-card'
             className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col h-full ${className}`}
         >
             {/* Header Section */}
