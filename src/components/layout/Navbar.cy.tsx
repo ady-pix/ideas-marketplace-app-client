@@ -226,13 +226,10 @@ describe('Navbar', () => {
 
             // Verify all online users are displayed
             cy.get('div[data-testid="online-users-dropdown"]').within(() => {
-                cy.get('div[data-testid="online-user"]').should(
-                    'have.length',
-                    3
-                )
+                cy.get('[data-testid="online-user"]').should('have.length', 3)
 
                 // Verify first user
-                cy.get('div[data-testid="online-user"]')
+                cy.get('[data-testid="online-user"]')
                     .first()
                     .within(() => {
                         cy.get('img').should(
@@ -244,17 +241,17 @@ describe('Navbar', () => {
                     })
 
                 // Verify second user
-                cy.get('div[data-testid="online-user"]')
+                cy.get('[data-testid="online-user"]')
                     .eq(1)
                     .within(() => {
                         cy.get('img')
                             .should('have.attr', 'src')
-                            .and('match', /src\/assets\/avatar-color\.svg$/)
+                            .and('match', /^data:image\/svg\+xml/)
                         cy.get('span').contains('Test User 2').should('exist')
                     })
 
                 // Verify third user
-                cy.get('div[data-testid="online-user"]')
+                cy.get('[data-testid="online-user"]')
                     .eq(2)
                     .within(() => {
                         cy.get('img').should(
@@ -343,7 +340,7 @@ describe('Navbar', () => {
                     .within(() => {
                         cy.get('img')
                             .should('have.attr', 'src')
-                            .and('match', /src\/assets\/avatar-color\.svg$/)
+                            .and('match', /^data:image\/svg\+xml/)
                         cy.get('span').contains('Test User 2').should('exist')
                     })
 
