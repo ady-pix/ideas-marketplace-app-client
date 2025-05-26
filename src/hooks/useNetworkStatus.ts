@@ -16,7 +16,7 @@ export const useNetworkStatus = () => {
     const checkApiHealth = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/health`,
+                `${import.meta.env.VITE_API_URL}/health`,
                 {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },

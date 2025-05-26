@@ -4,7 +4,7 @@ import {
     useState,
     useEffect,
     useContext,
-    ReactNode,
+    type ReactNode,
 } from 'react'
 import type { User } from 'firebase/auth'
 import {
@@ -39,7 +39,7 @@ interface AuthContextType {
     updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
 }
 
-import { UserProfile } from '../types/user'
+import { type UserProfile } from '../types/user'
 
 interface AuthProviderProps {
     children: ReactNode
@@ -276,6 +276,81 @@ export const AuthProvider = ({
 
         return () => unsubscribe()
     }, [firebaseAuth])
+
+    // Force logout on window close/app close
+    useEffect(() => {
+        const handleBeforeUnload = async () => {
+            if (currentUser) {
+                // Update online status to false before closing
+                try {
+                    await setDoc(
+                        doc(firebaseDb, 'users', currentUser.uid),
+                        {
+                            isOnline: false,
+                            lastSeen: serverTimestamp(),
+                        },
+                        { merge: true }
+                    )
+
+                    // Optional: Sign out the user completely
+                    await signOut(firebaseAuth)
+                } catch (error) {
+                    console.error('Error during forced logout:', error)
+                }
+            }
+        }
+
+        const handleVisibilityChange = async () => {
+            if (document.visibilityState === 'hidden' && currentUser) {
+                // User switched tabs or minimized - mark as away
+                try {
+                    await setDoc(
+                        doc(firebaseDb, 'users', currentUser.uid),
+                        {
+                            isOnline: false,
+                            lastSeen: serverTimestamp(),
+                        },
+                        { merge: true }
+                    )
+                } catch (error) {
+                    console.error(
+                        'Error updating status on visibility change:',
+                        error
+                    )
+                }
+            } else if (document.visibilityState === 'visible' && currentUser) {
+                // User came back - mark as online
+                try {
+                    await setDoc(
+                        doc(firebaseDb, 'users', currentUser.uid),
+                        {
+                            isOnline: true,
+                            lastSeen: serverTimestamp(),
+                        },
+                        { merge: true }
+                    )
+                } catch (error) {
+                    console.error(
+                        'Error updating status on visibility change:',
+                        error
+                    )
+                }
+            }
+        }
+
+        // Add event listeners
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            document.removeEventListener(
+                'visibilitychange',
+                handleVisibilityChange
+            )
+        }
+    }, [currentUser, firebaseAuth, firebaseDb])
 
     const updateUserProfile = async (data: Partial<UserProfile>) => {
         if (!currentUser || !userProfile) return

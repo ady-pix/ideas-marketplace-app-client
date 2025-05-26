@@ -4,7 +4,7 @@ import {
     useState,
     useEffect,
     useContext,
-    ReactNode,
+    type ReactNode,
 } from 'react'
 import {
     doc,

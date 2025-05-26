@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Idea } from '../types/idea'
+import { type Idea } from '../types/idea'
 import LoadingSpinner from '../components/LoadingSpinner'
-import IdeaForm, { IdeaFormData } from '../components/forms/IdeaForm'
+import IdeaForm, { type IdeaFormData } from '../components/forms/IdeaForm'
 import { LoadingErrorDisplay } from '../components/common/ErrorDisplay'
 import { IoArrowBack } from 'react-icons/io5'
 
@@ -26,7 +26,7 @@ export default function EditIdeaPage() {
 
             const token = await currentUser.getIdToken()
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export default function EditIdeaPage() {
             }
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 {
                     method: 'PUT',
                     headers: {

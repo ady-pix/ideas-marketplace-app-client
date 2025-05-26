@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Idea } from '../../types/idea'
+import { type Idea } from '../../types/idea'
 
 interface IdeaCardProps {
     idea: Idea

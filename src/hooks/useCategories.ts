@@ -28,7 +28,7 @@ export const useCategories = (): UseCategoriesReturn => {
             setLoading(true)
             setError(null)
             
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/categories`)
             
             if (!response.ok) {
                 throw new Error('Failed to fetch categories')

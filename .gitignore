@@ -4,7 +4,6 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-<<<<<<< HEAD
 lerna-debug.log*
 .pnpm-debug.log*
 
@@ -78,7 +77,11 @@ web_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+
 .env.local
+.env.development
+.env.test
+.env.production
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -135,30 +138,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-=======
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment variables
-.env
-.env.local
-.env.development
-.env.test
-.env.production
->>>>>>> 5af4ea2 (Initial commit - Login and Online Users)
+# Generated TypeScript declaration files
+**/*.d.ts
+!src/types//.d.ts  # Keep custom type definitions
+!.d.ts              # Keep root level type definitions
+!cypress/support//*.d.ts
+!src/env.d.ts

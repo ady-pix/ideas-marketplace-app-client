@@ -6,7 +6,7 @@ import { Switch } from '@headlessui/react'
 import { useCategories } from '../../hooks/useCategories'
 import LoadingSpinner from '../LoadingSpinner'
 import { IoSave, IoAdd, IoWarning } from 'react-icons/io5'
-import { Idea } from '../../types/idea'
+import { type Idea } from '../../types/idea'
 
 // Configuration constants
 const protections = ['None', 'Patent', 'Trademark', 'Copyright', 'Trade Secret']

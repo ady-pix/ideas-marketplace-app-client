@@ -29,7 +29,7 @@ export const useLanguages = (): UseLanguagesReturn => {
             setError(null)
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/languages`
+                `${import.meta.env.VITE_API_URL}/languages`
             )
 
             if (!response.ok) {

@@ -1,5 +1,5 @@
 // src/components/layout/Navbar.tsx
-import { useState, useEffect, useRef, useCallback, JSX } from 'react'
+import { useState, useEffect, useRef, useCallback, type JSX } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { IoMdClose } from 'react-icons/io'
 import { IoMenu } from 'react-icons/io5'

@@ -8,7 +8,7 @@ import LoadingSpinner, { LoadingSkeleton } from '../components/LoadingSpinner'
 import { NetworkErrorDisplay } from '../components/common/ErrorDisplay'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
 import { useAuth } from '../context/AuthContext'
-import { Idea, Filters, ApiResponse } from '../types/idea'
+import { type Idea, type Filters, type ApiResponse } from '../types/idea'
 
 export default function IdeasPage() {
     const { categoryNames } = useCategories()
@@ -25,7 +25,7 @@ export default function IdeasPage() {
     const fetchCreatorName = useCallback(async (creatorId: string) => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/user/${creatorId}`
+                `${import.meta.env.VITE_API_URL}/ideas/user/${creatorId}`
             )
             if (response.ok) {
                 const userData = await response.json()
@@ -165,7 +165,7 @@ export default function IdeasPage() {
                 }
 
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/api/ideas?${queryString}`,
+                    `${import.meta.env.VITE_API_URL}/ideas?${queryString}`,
                     {
                         signal: controller.signal,
                         headers,
