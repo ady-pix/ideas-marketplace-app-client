@@ -25,3 +25,10 @@ export const database = {
     onSnapshot: () => () => {},
     serverTimestamp: () => new Date(),
 } as any
+
+export const storage = {
+    // Mock basic Storage interface
+    ref: () => ({}),
+    uploadBytes: async () => ({ ref: {} }),
+    getDownloadURL: async () => 'mock-url',
+} as any

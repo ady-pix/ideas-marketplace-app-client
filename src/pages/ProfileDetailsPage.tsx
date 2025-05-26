@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, Link, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-// Firebase imports removed - using AuthContext for profile data
-import { UserProfile } from '../types/user'
-import { Idea } from '../types/idea'
+import { type UserProfile } from '../types/user'
+import { type Idea } from '../types/idea'
 import LoadingSpinner from '../components/LoadingSpinner'
 import {
     LoadingErrorDisplay,

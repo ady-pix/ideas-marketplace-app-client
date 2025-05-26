@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Idea } from '../types/idea'
+import type { Idea } from '../types/idea'
 import LoadingSpinner from '../components/LoadingSpinner'
 import {
     LoadingErrorDisplay,

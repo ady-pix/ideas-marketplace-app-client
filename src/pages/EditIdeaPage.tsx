@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Idea } from '../types/idea'
+import { type Idea } from '../types/idea'
 import LoadingSpinner from '../components/LoadingSpinner'
-import IdeaForm, { IdeaFormData } from '../components/forms/IdeaForm'
+import IdeaForm, { type IdeaFormData } from '../components/forms/IdeaForm'
 import { LoadingErrorDisplay } from '../components/common/ErrorDisplay'
 import { IoArrowBack } from 'react-icons/io5'
 

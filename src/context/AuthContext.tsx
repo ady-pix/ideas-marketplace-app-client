@@ -4,7 +4,7 @@ import {
     useState,
     useEffect,
     useContext,
-    ReactNode,
+    type ReactNode,
 } from 'react'
 import type { User } from 'firebase/auth'
 import {
@@ -39,7 +39,7 @@ interface AuthContextType {
     updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
 }
 
-import { UserProfile } from '../types/user'
+import type { UserProfile } from '../types/user'
 
 interface AuthProviderProps {
     children: ReactNode

@@ -10,7 +10,7 @@ async function initializeFirebase() {
         const mock = await import('../__mocks__/firebase')
         auth = mock.auth
         database = mock.database
-        storage = mock.storage || {} // optional
+        storage = mock.storage
         app = {}
     } else {
         // ✅ Use real Firebase modules

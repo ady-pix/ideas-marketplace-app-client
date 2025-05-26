@@ -8,7 +8,7 @@ import LoadingSpinner, { LoadingSkeleton } from '../components/LoadingSpinner'
 import { NetworkErrorDisplay } from '../components/common/ErrorDisplay'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
 import { useAuth } from '../context/AuthContext'
-import { Idea, Filters, ApiResponse } from '../types/idea'
+import type { Idea, Filters, ApiResponse } from '../types/idea'
 
 export default function IdeasPage() {
     const { categoryNames } = useCategories()

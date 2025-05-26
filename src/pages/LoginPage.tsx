@@ -1,5 +1,5 @@
 // src/pages/LoginPage.tsx
-import { useState, FormEvent } from 'react'
+import { useState, type FormEvent, type JSX } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { FcGoogle } from 'react-icons/fc'
@@ -20,8 +20,10 @@ function LoginPage(): JSX.Element {
             setLoading(true)
             await login(email, password)
             navigate('/')
-        } catch (error: any) {
-            setError(error.message || 'Failed to log in')
+        } catch (error: unknown) {
+            setError(
+                error instanceof Error ? error.message : 'Failed to log in'
+            )
             console.error(error)
         } finally {
             setLoading(false)
@@ -34,8 +36,12 @@ function LoginPage(): JSX.Element {
             setLoading(true)
             await loginWithGoogle()
             navigate('/')
-        } catch (error: any) {
-            setError(error.message || 'Failed to log in with Google')
+        } catch (error: unknown) {
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to log in with Google'
+            )
             console.error(error)
         } finally {
             setLoading(false)

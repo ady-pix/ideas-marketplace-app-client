@@ -1,7 +1,6 @@
-import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import IdeaCard from './IdeaCard'
-import { Idea } from '../../types/idea'
+import type { Idea } from '../../types/idea'
 
 const mockIdea: Idea = {
     _id: '1',

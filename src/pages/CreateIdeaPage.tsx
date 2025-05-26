@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import IdeaForm, { IdeaFormData } from '../components/forms/IdeaForm'
+import IdeaForm, { type IdeaFormData } from '../components/forms/IdeaForm'
 
 export default function CreateIdeaPage() {
     const navigate = useNavigate()
