@@ -6,6 +6,9 @@ export default defineConfig({
             framework: 'react',
             bundler: 'vite',
         },
+        env: {
+            VITE_USE_MOCK_FIREBASE: 'true',
+        },
     },
     e2e: {
         baseUrl: 'http://localhost:3000',

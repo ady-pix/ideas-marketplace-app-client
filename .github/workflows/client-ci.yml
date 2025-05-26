@@ -30,12 +30,11 @@ jobs:
 
             - name: 🧪 Run Cypress Component Tests
               run: npx cypress run --component
+              env:
+                  VITE_USE_MOCK_FIREBASE: 'true'
 
             # - name: 🧪 Run Cypress E2E Tests
             #   run: npx cypress run --e2e
 
             # - name: 🚀 Build (optional)
             #   run: npm run build
-
-env:
-    VITE_USE_MOCK_FIREBASE: true
