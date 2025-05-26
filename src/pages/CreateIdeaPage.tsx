@@ -27,7 +27,7 @@ export default function CreateIdeaPage() {
             }
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas`,
+                `${import.meta.env.VITE_API_URL}/ideas`,
                 {
                     method: 'POST',
                     headers: {

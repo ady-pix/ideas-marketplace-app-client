@@ -57,9 +57,7 @@ function ProfileDetailsPage() {
             // Fetch user data from API for both own profile and other users
             try {
                 const response = await fetch(
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }/api/ideas/user/${targetUserId}`
+                    `${import.meta.env.VITE_API_URL}/ideas/user/${targetUserId}`
                 )
 
                 if (response.ok) {
@@ -142,7 +140,7 @@ function ProfileDetailsPage() {
                     const response = await fetch(
                         `${
                             import.meta.env.VITE_API_URL
-                        }/api/ideas?mine=true&limit=1`,
+                        }/ideas?mine=true&limit=1`,
                         {
                             headers: {
                                 'Content-Type': 'application/json',
@@ -166,7 +164,7 @@ function ProfileDetailsPage() {
                     // For other users, fetch all public ideas and count those created by this user
                     // We'll fetch a large number to get an accurate count
                     const response = await fetch(
-                        `${import.meta.env.VITE_API_URL}/api/ideas?limit=1000`,
+                        `${import.meta.env.VITE_API_URL}/ideas?limit=1000`,
                         {
                             headers: {
                                 'Content-Type': 'application/json',

@@ -43,7 +43,7 @@ export default function IdeaDetailsPage() {
             }
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 { headers }
             )
 
@@ -76,7 +76,7 @@ export default function IdeaDetailsPage() {
             const token = await currentUser.getIdToken()
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 {
                     method: 'DELETE',
                     headers: {

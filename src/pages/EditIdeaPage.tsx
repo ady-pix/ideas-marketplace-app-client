@@ -26,7 +26,7 @@ export default function EditIdeaPage() {
 
             const token = await currentUser.getIdToken()
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export default function EditIdeaPage() {
             }
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/ideas/${id}`,
+                `${import.meta.env.VITE_API_URL}/ideas/${id}`,
                 {
                     method: 'PUT',
                     headers: {
