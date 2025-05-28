@@ -300,55 +300,12 @@ export const AuthProvider = ({
             }
         }
 
-        const handleVisibilityChange = async () => {
-            if (document.visibilityState === 'hidden' && currentUser) {
-                // User switched tabs or minimized - mark as away
-                try {
-                    await setDoc(
-                        doc(firebaseDb, 'users', currentUser.uid),
-                        {
-                            isOnline: false,
-                            lastSeen: serverTimestamp(),
-                        },
-                        { merge: true }
-                    )
-                } catch (error) {
-                    console.error(
-                        'Error updating status on visibility change:',
-                        error
-                    )
-                }
-            } else if (document.visibilityState === 'visible' && currentUser) {
-                // User came back - mark as online
-                try {
-                    await setDoc(
-                        doc(firebaseDb, 'users', currentUser.uid),
-                        {
-                            isOnline: true,
-                            lastSeen: serverTimestamp(),
-                        },
-                        { merge: true }
-                    )
-                } catch (error) {
-                    console.error(
-                        'Error updating status on visibility change:',
-                        error
-                    )
-                }
-            }
-        }
-
-        // Add event listeners
+        // Add event listener only for window close/unload
         window.addEventListener('beforeunload', handleBeforeUnload)
-        document.addEventListener('visibilitychange', handleVisibilityChange)
 
         // Cleanup
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload)
-            document.removeEventListener(
-                'visibilitychange',
-                handleVisibilityChange
-            )
         }
     }, [currentUser, firebaseAuth, firebaseDb])
 

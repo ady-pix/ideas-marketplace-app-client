@@ -33,8 +33,6 @@ function App() {
                                     path='ideas/:id/edit'
                                     element={<EditIdeaPage />}
                                 />
-                            </Route>
-                            <Route element={<ProtectedRoute />}>
                                 <Route
                                     path='create-idea'
                                     element={<CreateIdeaPage />}
